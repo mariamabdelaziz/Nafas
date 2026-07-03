@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نَفَسْ — مساحتكِ الآمنة</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #F5F0EB;
+  --bg2: #EDE8E2;
+  --card: #FFFFFF;
+  --muted: #C4B5A5;
+  --brown: #7A6A5A;
+  --brown-dark: #5C4E40;
+  --brown-light: #A89080;
+  --green: #7B9E87;
+  --green-pale: #D6E8DC;
+  --text: #3D3530;
+  --text-soft: #8A7A6A;
+  --border: #E5DDD5;
+}
+body {
+  font-family: 'IBM Plex Sans Arabic', 'Noto Naskh Arabic', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+}
+.screen {
+  display: none;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0;
+  animation: fadeIn 0.5s ease both;
+}
+.screen.active { display: flex; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+/* ===== HEADER ===== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky; top: 0; z-index: 10;
+}
+.logo-text {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--brown-dark);
+}
+.header-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.back-btn, .logout-btn {
+  background: none; border: none;
+  color: var(--muted); cursor: pointer;
+  font-family: inherit; font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+.back-btn:hover, .logout-btn:hover { background: var(--border); }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar {
+  height: 3px;
+  background: var(--border);
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--brown);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* ===== PHASE BADGE ===== */
+.phase-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 6px 16px;
+  margin: 20px 24px 0;
+  font-size: 12px;
+  color: var(--brown);
+}
+.phase-num {
+  width: 20px; height: 20px;
+  background: var(--brown);
+  color: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+}
+
+/* ===== CONTENT ===== */
+.content { padding: 20px 24px 40px; flex: 1; }
+
+.section-title {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--brown-dark);
+  margin-bottom: 6px;
+}
+.section-sub {
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+/* ===== WELCOME ===== */
+.welcome-hero {
+  text-align: center;
+  padding: 40px 24px 32px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.breath-wrap { position:relative; width:140px; height:140px; margin-bottom:32px; }
+.breath-ring { position:absolute; inset:0; border-radius:50%; background:#E8DDD4; animation:breathe 5s ease-in-out infinite; }
+.breath-ring.delay { animation-delay:0.5s; background:transparent; border:1.5px solid var(--brown-light); opacity:0.5; }
+.breath-core { position:absolute; inset:24px; border-radius:50%; background:var(--brown); opacity:0.7; animation:breathe-core 5s ease-in-out infinite; }
+.breath-text { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:12px; color:white; letter-spacing:0.1em; }
+@keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+@keyframes breathe-core { 0%,100%{opacity:0.7} 50%{opacity:0.55} }
+
+.welcome-title { font-family:'Noto Naskh Arabic',serif; font-size:28px; font-weight:600; color:var(--brown-dark); margin-bottom:10px; }
+.welcome-tagline { font-size:14px; color:var(--text-soft); line-height:1.8; margin-bottom:8px; }
+.welcome-note { font-size:12px; color:var(--muted); margin-bottom:36px; }
+
+/* ===== INTRO CARD ===== */
+.intro-card {
+  background: white;
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
+.intro-card p { font-size: 13px; color: var(--text-soft); line-height: 2; }
+.intro-card p + p { margin-top: 12px; }
+.intro-card strong { color: var(--brown-dark); font-weight: 500; }
+
+/* ===== PHASES OVERVIEW ===== */
+.phases-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0 24px;
+}
+.phase-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.phase-card .num { font-size: 11px; color: var(--muted); }
+.phase-card .name { font-size: 13px; color: var(--brown-dark); font-weight: 500; }
+.phase-card .icon { font-size: 22px; }
+
+/* ===== FEELINGS ===== */
+.feelings-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px; }
+.feeling-item {
+  background: white;
+  border: 1.5px solid transparent;
+  border-radius: 16px;
+  padding: 18px 14px;
+  display: flex; flex-direction: column;
+  align-items: flex-start; gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.feeling-item:hover { border-color: var(--brown-light); }
+.feeling-item.checked { border-color: var(--brown); background: #FAF5F0; }
+.feeling-item .fi { font-size: 11px; color: var(--muted); }
+.feeling-item .fl { font-size: 13px; color: var(--text); line-height: 1.4; }
+.check-box {
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  transition: all 0.2s;
+  align-self: flex-end;
+  margin-top: 4px;
+}
+.feeling-item.checked .check-box { background: var(--brown); border-color: var(--brown); color: white; }
+
+/* ===== INTENSITY SCALE ===== */
+.intensity-wrap { background: white; border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+.intensity-label { font-size: 13px; color: var(--brown-dark); font-weight: 500; margin-bottom: 16px; }
+.intensity-scale { display: flex; gap: 6px; margin-bottom: 8px; }
+.int-btn {
+  flex: 1; aspect-ratio: 1;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  font-size: 12px;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.int-btn:hover { border-color: var(--brown-light); }
+.int-btn.selected { background: var(--brown); border-color: var(--brown); color: white; }
+.intensity-range { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); }
+
+/* ===== TEXTAREA ===== */
+.textarea-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); }
+.textarea-label { font-size: 13px; color: var(--brown-dark); font-weight: 500; margin-bottom: 12px; display: block; }
+.nafas-textarea {
+  width: 100%;
+  min-height: 130px;
+  border: none;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 14px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.9;
+  resize: none;
+  outline: none;
+}
+.nafas-textarea::placeholder { color: var(--muted); }
+.nafas-textarea.tall { min-height: 180px; }
+
+/* ===== CHECKLIST ===== */
+.check-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.check-item {
+  display: flex; align-items: center; gap: 12px;
+  background: white; border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.2s;
+}
+.check-item:hover { border-color: var(--border); }
+.check-item.done { border-color: var(--brown); background: #FAF5F0; }
+.check-item .cb {
+  width: 22px; height: 22px; min-width: 22px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+.check-item.done .cb { background: var(--brown); border-color: var(--brown); color: white; }
+.check-item .ct { font-size: 13px; color: var(--text-soft); line-height: 1.5; }
+.check-item.done .ct { color: var(--brown-dark); }
+
+/* ===== BREATHING EXERCISE ===== */
+.breath-exercise { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 24px 0; }
+.breath-big {
+  width: 150px; height: 150px; border-radius: 50%;
+  background: #EDE8E2;
+  border: 2px solid var(--brown-light);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: transform 4s ease-in-out;
+}
+.breath-big.inhale { transform: scale(1.2); }
+.breath-big.exhale { transform: scale(0.85); }
+.breath-big .bl { font-size: 15px; color: var(--brown-dark); font-family: 'Noto Naskh Arabic', serif; }
+.breath-big .bs { font-size: 11px; color: var(--brown-light); }
+.breath-step-text { font-size: 16px; font-family: 'Noto Naskh Arabic', serif; color: var(--text); }
+.breath-count-text { font-size: 12px; color: var(--muted); }
+.breath-dots { display: flex; gap: 6px; }
+.bdot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
+.bdot.done { background: var(--brown); }
+
+/* ===== GROUNDING ===== */
+.ground-list { display: flex; flex-direction: column; gap: 10px; }
+.ground-item {
+  display: flex; align-items: center; gap: 14px;
+  background: white; border-radius: 14px;
+  padding: 16px; cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.2s;
+}
+.ground-item.done { border-color: var(--brown); background: #FAF5F0; }
+.ground-num {
+  width: 34px; height: 34px; min-width: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 14px; color: var(--text-soft);
+  transition: all 0.2s;
+}
+.ground-item.done .ground-num { background: var(--brown); border-color: var(--brown); color: white; }
+.ground-txt { font-size: 13px; color: var(--text-soft); line-height: 1.6; }
+.ground-item.done .ground-txt { color: var(--brown-dark); }
+
+/* ===== MANDALA ===== */
+.mandala-wrap {
+  background: white; border-radius: 18px;
+  padding: 24px; text-align: center;
+  border: 1px solid var(--border); margin-bottom: 16px;
+}
+.mandala-wrap svg { width: 100%; max-width: 280px; opacity: 0.6; }
+.mandala-note { font-size: 12px; color: var(--muted); margin-top: 12px; }
+
+/* ===== END CARD ===== */
+.end-card {
+  background: white; border-radius: 18px;
+  padding: 28px 24px; text-align: center;
+  border: 1px solid var(--border); margin-bottom: 16px;
+}
+.end-icon { font-size: 40px; margin-bottom: 16px; }
+.end-title { font-family: 'Noto Naskh Arabic', serif; font-size: 22px; font-weight: 600; color: var(--brown-dark); margin-bottom: 8px; }
+.end-sub { font-size: 13px; color: var(--text-soft); line-height: 1.8; }
+.ayah-card {
+  background: #FAF5F0;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 24px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.ayah-text {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 17px;
+  color: var(--brown-dark);
+  line-height: 2;
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+  width: 100%;
+  background: var(--brown-dark);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  padding: 15px;
+  font-family: inherit;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  margin-bottom: 10px;
+}
+.btn-primary:hover { background: var(--brown); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-ghost {
+  width: 100%;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  padding: 13px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 10px;
+}
+.btn-ghost:hover { border-color: var(--brown); color: var(--brown); }
+
+.note-box {
+  background: #FFF8F5;
+  border-right: 3px solid var(--brown-light);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--text-soft);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+.note-box strong { color: var(--brown-dark); }
+
+.expiry-banner {
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+  background: white; border-radius: 100px;
+  padding: 8px 20px; font-size: 11px; color: var(--text-soft);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+  white-space: nowrap; display: none;
+  border: 1px solid var(--border);
+}
+
+.divider { width: 40px; height: 1.5px; background: var(--border); margin: 20px auto; border-radius: 2px; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<!-- ===== SCREEN 0: WELCOME ===== -->
+<div class="screen active" id="s0">
+  <div class="header">
+    <div>
+      <div class="logo-text">نَفَسْ</div>
+      <div class="header-sub">مساحتكِ الآمنة</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">خروج</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+
+  <div class="welcome-hero">
+    <div class="breath-wrap">
+      <div class="breath-ring"></div>
+      <div class="breath-ring delay"></div>
+      <div class="breath-core"></div>
+      <div class="breath-text">تنفّسي</div>
+    </div>
+    <div class="welcome-title">عزيزتي..</div>
+    <p class="welcome-tagline">في هذه اللحظة التي يضيق فيها قلبكِ<br>وتتسارع أفكاركِ كالعاصفة...<br>أنتِ لستِ وحدك.</p>
+    <p class="welcome-note">هذه المفكرة هي حضنكِ الدافئ في أصعب اللحظات</p>
+    <button class="btn-primary" onclick="go('s1')">أنا مستعدة 🌿</button>
+    <button class="btn-ghost" onclick="go('s1')">أحتاج لحظة أتنفس أولاً</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN 1: INTRO ===== -->
+<div class="screen" id="s1">
+  <div class="header">
+    <div>
+      <div class="logo-text">نَفَسْ</div>
+      <div class="header-sub">كيف تستخدمين المفكرة؟</div>
+    </div>
+    <button class="back-btn" onclick="go('s0')">→ رجوع</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:5%"></div></div>
+
+  <div class="content">
+    <div class="intro-card">
+      <p>هذه المفكّرة <strong>ليست كتاباً</strong> تقرئينه من أوّله لآخره، بل هي أداة تفاعلية تلجئين إليها في أي لحظة تشعرين فيها بالضيق أو الإرهاق.</p>
+      <p>لا توجد إجابات صحيحة أو خاطئة. <strong>فقط أنتِ وأفكاركِ.</strong></p>
+      <p>الرحلة مصممة عبر <strong>٤ مراحل متتالية</strong> — كل مرحلة تُمهّد الطريق للتي تليها لتصلي إلى أعمق درجات الهدوء.</p>
+    </div>
+
+    <div class="phases-row">
+      <div class="phase-card">
+        <div class="num">المرحلة ١</div>
+        <div class="icon">🫁</div>
+        <div class="name">التهدئة الفورية</div>
+      </div>
+      <div class="phase-card">
+        <div class="num">المرحلة ٢</div>
+        <div class="icon">📝</div>
+        <div class="name">التفريغ والتفكيك</div>
+      </div>
+      <div class="phase-card">
+        <div class="num">المرحلة ٣</div>
+        <div class="icon">🎨</div>
+        <div class="name">التشتيت والهدنة</div>
+      </div>
+      <div class="phase-card">
+        <div class="num">المرحلة ٤</div>
+        <div class="icon">🌿</div>
+        <div class="name">الإغلاق والمراجعة</div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="go('s2')">نبدأ — المرحلة الأولى ←</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN 2: PHASE 1 — IMMEDIATE CALM ===== -->
+<div class="screen" id="s2">
+  <div class="header">
+    <div>
+      <div class="logo-text">المرحلة الأولى</div>
+      <div class="header-sub">التهدئة الفورية</div>
+    </div>
+    <button class="back-btn" onclick="go('s1')">→ رجوع</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:15%"></div></div>
+
+  <div class="content">
+    <div class="note-box">
+      هذا الجزء هو <strong>طوق النجاة</strong> لكِ. الهدف ليس حل المشكلة فوراً، بل تهدئة جسدكِ وعقلكِ أولاً.
+    </div>
+
+    <div class="section-title" style="margin-bottom:14px;">ابدئي بهذه الخطوات</div>
+    <div class="check-list" id="calmChecks">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb">✓</div>
+        <div class="ct"><strong>قومي بتغيير مكانك</strong> — هذا يرسل إشارة لعقلكِ بأنكِ ابتعدتِ عن مصدر القلق</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb">✓</div>
+        <div class="ct"><strong>الوضوء</strong> — يبطئ نبضات القلب المتسارعة ويجلب للجسد الاسترخاء فوراً</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="cb">✓</div>
+        <div class="ct"><strong>الاستعاذة</strong> — "أعوذ بالله من الشيطان الرجيم"</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin:20px 0 8px;">تمارين الاتزان</div>
+    <p class="section-sub">اختاري تمريناً (أو كليهما) وامنحي نفسكِ دقائق من الهدوء</p>
+
+    <!-- Breathing 4-7-8 -->
+    <div class="textarea-card">
+      <span class="textarea-label">١- تمرين التنفس (٤-٧-٨)</span>
+      <div class="breath-exercise">
+        <div class="breath-big" id="breathCircle" onclick="nextBreath()">
+          <div class="bl" id="breathLabel">اضغطي للبدء</div>
+          <div class="bs" id="breathSub"></div>
+        </div>
+        <div class="breath-step-text" id="breathStep">استنشقي لـ ٤ ثوانٍ</div>
+        <div class="breath-count-text" id="breathCount">دورة ١ من ٤</div>
+        <div class="breath-dots" id="breathDots"></div>
+      </div>
+    </div>
+
+    <!-- 5-4-3-2-1 Grounding -->
+    <div class="textarea-card">
+      <span class="textarea-label">٢- تقنية الحواس (٥-٤-٣-٢-١)</span>
+      <p style="font-size:12px;color:var(--text-soft);margin-bottom:14px;line-height:1.8;">انظري حولكِ وسجّلي بوعي — هذه التقنية تعيدكِ للحاضر وتوقف دوّامة الأفكار</p>
+      <div class="ground-list">
+        <div class="ground-item" onclick="toggleGround(this)">
+          <div class="ground-num">٥</div>
+          <div class="ground-txt">أشياء تريها الآن حولكِ</div>
+        </div>
+        <div class="ground-item" onclick="toggleGround(this)">
+          <div class="ground-num">٤</div>
+          <div class="ground-txt">أشياء تلمسينها — ملمس ملابسكِ، الأرض تحت قدميكِ</div>
+        </div>
+        <div class="ground-item" onclick="toggleGround(this)">
+          <div class="ground-num">٣</div>
+          <div class="ground-txt">أشياء تسمعينها في هذه اللحظة</div>
+        </div>
+        <div class="ground-item" onclick="toggleGround(this)">
+          <div class="ground-num">٢</div>
+          <div class="ground-txt">رائحتان تشمينهما الآن</div>
+        </div>
+        <div class="ground-item" onclick="toggleGround(this)">
+          <div class="ground-num">١</div>
+          <div class="ground-txt">شيء واحد تتذوقينه — رشفة ماء أو طعم متبقٍ في فمكِ</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="go('s3')">جاهزة للمرحلة الثانية ←</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN 3: PHASE 2 — FEELINGS + DUMP ===== -->
+<div class="screen" id="s3">
+  <div class="header">
+    <div>
+      <div class="logo-text">المرحلة الثانية</div>
+      <div class="header-sub">التفريغ والتفكيك</div>
+    </div>
+    <button class="back-btn" onclick="go('s2')">→ رجوع</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
+
+  <div class="content">
+    <div class="note-box">
+      هذا القسم هو <strong>مساحتكِ الآمنة</strong> لتفريغ كل هذا التشويش على الورق. نقل الأفكار من رأسكِ يقلل من حجمها المخيف فوراً.
+    </div>
+
+    <!-- التاريخ -->
+    <div class="textarea-card">
+      <span class="textarea-label">التاريخ</span>
+      <input type="date" id="dateInput" style="width:100%;border:none;background:var(--bg);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:13px;color:var(--text);outline:none;" />
+    </div>
+
+    <!-- بم تشعرين -->
+    <div class="textarea-card">
+      <span class="textarea-label">بم تشعرين الآن؟ (يمكنكِ اختيار أكثر من خانة)</span>
+      <div class="feelings-grid">
+        <div class="feeling-item" onclick="this.classList.toggle('checked');this.querySelector('.check-box').textContent=this.classList.contains('checked')?'✓':''">
+          <div class="fi">□</div><div class="fl">تسارع في نبضات القلب</div><div class="check-box"></div>
+        </div>
+        <div class="feeling-item" onclick="this.classList.toggle('checked');this.querySelector('.check-box').textContent=this.classList.contains('checked')?'✓':''">
+          <div class="fi">□</div><div class="fl">ضيق أو ثقل في الصدر</div><div class="check-box"></div>
+        </div>
+        <div class="feeling-item" onclick="this.classList.toggle('checked');this.querySelector('.check-box').textContent=this.classList.contains('checked')?'✓':''">
+          <div class="fi">□</div><div class="fl">أفكار متلاحقة لا تتوقف</div><div class="check-box"></div>
+        </div>
+        <div class="feeling-item" onclick="this.classList.toggle('checked');this.querySelector('.check-box').textContent=this.classList.contains('checked')?'✓':''">
+          <div class="fi">□</div><div class="fl">رغبة في البكاء أو الانعزال</div><div class="check-box"></div>
+        </div>
+        <div class="feeling-item" onclick="this.classList.toggle('checked');this.querySelector('.check-box').textContent=this.classList.contains('checked')?'✓':''">
+          <div class="fi">□</div><div class="fl">توتر وقلق</div><div class="check-box"></div>
+        </div>
+        <div class="feeling-item" onclick="this.classList.toggle('checked');this.querySelector('.check-box').textContent=this.classList.contains('checked')?'✓':''">
+          <div class="fi">□</div><div class="fl">غضب ورغبة في الصياح</div><div class="check-box"></div>
+        </div>
+        <div class="feeling-item" onclick="this.classList.toggle('checked');this.querySelector('.check-box').textContent=this.classList.contains('checked')?'✓':''">
+          <div class="fi">□</div><div class="fl">شعور بالترقب والخوف</div><div class="check-box"></div>
+        </div>
+        <div class="feeling-item" onclick="this.classList.toggle('checked');this.querySelector('.check-box').textContent=this.classList.contains('checked')?'✓':''">
+          <div class="fi">□</div><div class="fl">إرهاق وتعب</div><div class="check-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- شدة الشعور -->
+    <div class="intensity-wrap">
+      <div class="intensity-label">ما شدة هذا الشعور؟ (قيّمي من ١ إلى ١٠)</div>
+      <div class="intensity-scale" id="intensityScale">
+        <button class="int-btn" onclick="selectInt(this,1)">١</button>
+        <button class="int-btn" onclick="selectInt(this,2)">٢</button>
+        <button class="int-btn" onclick="selectInt(this,3)">٣</button>
+        <button class="int-btn" onclick="selectInt(this,4)">٤</button>
+        <button class="int-btn" onclick="selectInt(this,5)">٥</button>
+        <button class="int-btn" onclick="selectInt(this,6)">٦</button>
+        <button class="int-btn" onclick="selectInt(this,7)">٧</button>
+        <button class="int-btn" onclick="selectInt(this,8)">٨</button>
+        <button class="int-btn" onclick="selectInt(this,9)">٩</button>
+        <button class="int-btn" onclick="selectInt(this,10)">١٠</button>
+      </div>
+      <div class="intensity-range"><span>خفيف</span><span>شديد جداً</span></div>
+    </div>
+
+    <!-- ما الذي حدث -->
+    <div class="textarea-card">
+      <span class="textarea-label">ما الذي حدث وفجّر هذا الشعور؟</span>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:10px;">هيا افرغي كل ما بداخلكِ</p>
+      <textarea class="nafas-textarea tall" placeholder="اكتبي هنا بحرية... لا أحد يقرأ ما تكتبينه 🌿"></textarea>
+    </div>
+
+    <!-- أسئلة التفكيك -->
+    <div class="textarea-card">
+      <span class="textarea-label">هل حجم توترك الآن مناسب لحجم الموقف الحقيقي؟</span>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:10px;">أم أنكِ تستدعين ملفات وجروح قديمة؟</p>
+      <textarea class="nafas-textarea" placeholder="أجيبي بصدق..."></textarea>
+    </div>
+
+    <div class="textarea-card">
+      <span class="textarea-label">في هذا الموقف، أي جزء يقع تحت سيطرتكِ وأي جزء خارجها؟</span>
+      <div style="margin:12px 0 8px;">
+        <div style="font-size:12px;color:var(--brown);font-weight:500;margin-bottom:6px;">• خارج سيطرتكِ — تجاهليه تماماً، استغفري ٢٠ مرة بنية الفرج</div>
+        <textarea class="nafas-textarea" placeholder="ما هو خارج سيطرتكِ..."></textarea>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:12px;color:var(--brown);font-weight:500;margin-bottom:6px;">• داخل سيطرتكِ — هذا ما سنركز عليه</div>
+        <textarea class="nafas-textarea" placeholder="ما هو داخل سيطرتكِ..."></textarea>
+      </div>
+    </div>
+
+    <div class="textarea-card">
+      <span class="textarea-label">ما الخطوات التي يمكنكِ القيام بها لتعديل الجزء الواقع تحت سيطرتكِ؟</span>
+      <textarea class="nafas-textarea" placeholder="فكّري في خطوة واحدة صغيرة..."></textarea>
+    </div>
+
+    <div class="textarea-card">
+      <span class="textarea-label">لو كانت صديقتكِ في هذا الموقف، بم ستنصحينها؟</span>
+      <textarea class="nafas-textarea" placeholder="كوني لطيفة مع نفسكِ كما ستكونين مع صديقتكِ..."></textarea>
+    </div>
+
+    <button class="btn-primary" onclick="go('s4')">جاهزة للمرحلة الثالثة ←</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN 4: PHASE 3 — DISTRACTION ===== -->
+<div class="screen" id="s4">
+  <div class="header">
+    <div>
+      <div class="logo-text">المرحلة الثالثة</div>
+      <div class="header-sub">التشتيت الذكي والهدنة</div>
+    </div>
+    <button class="back-btn" onclick="go('s3')">→ رجوع</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div>
+
+  <div class="content">
+    <div class="note-box">
+      هذا القسم هو <strong>استراحة محارب</strong> لعقلكِ. لا يهدف إلى الهروب من المشكلة، بل يمنح عقلكِ <strong>هدنة مؤقتة</strong> ويفصلكِ تماماً عن التوتر.
+    </div>
+
+    <div class="section-title" style="margin-bottom:8px;">نشاط التشتيت</div>
+    <p class="section-sub">لوّني هذا الماندالا — التلوين يهدئ الجهاز العصبي ويعيد توجيه الطاقة</p>
+
+    <div class="mandala-wrap">
+      <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#8A7A6A" stroke-width="0.8" fill="none" transform="translate(150,150)">
+          <!-- center -->
+          <circle r="12"/>
+          <circle r="8"/>
+          <!-- ring 1 -->
+          <circle r="28"/>
+          <g>
+            <line x1="0" y1="12" x2="0" y2="28"/>
+            <line x1="0" y1="12" x2="0" y2="28" transform="rotate(45)"/>
+            <line x1="0" y1="12" x2="0" y2="28" transform="rotate(90)"/>
+            <line x1="0" y1="12" x2="0" y2="28" transform="rotate(135)"/>
+            <line x1="0" y1="12" x2="0" y2="28" transform="rotate(180)"/>
+            <line x1="0" y1="12" x2="0" y2="28" transform="rotate(225)"/>
+            <line x1="0" y1="12" x2="0" y2="28" transform="rotate(270)"/>
+            <line x1="0" y1="12" x2="0" y2="28" transform="rotate(315)"/>
+          </g>
+          <!-- petals ring 1 -->
+          <g>
+            <ellipse cx="0" cy="-40" rx="8" ry="14"/>
+            <ellipse cx="0" cy="-40" rx="8" ry="14" transform="rotate(45)"/>
+            <ellipse cx="0" cy="-40" rx="8" ry="14" transform="rotate(90)"/>
+            <ellipse cx="0" cy="-40" rx="8" ry="14" transform="rotate(135)"/>
+            <ellipse cx="0" cy="-40" rx="8" ry="14" transform="rotate(180)"/>
+            <ellipse cx="0" cy="-40" rx="8" ry="14" transform="rotate(225)"/>
+            <ellipse cx="0" cy="-40" rx="8" ry="14" transform="rotate(270)"/>
+            <ellipse cx="0" cy="-40" rx="8" ry="14" transform="rotate(315)"/>
+          </g>
+          <!-- ring 2 -->
+          <circle r="56"/>
+          <!-- petals ring 2 -->
+          <g>
+            <ellipse cx="0" cy="-70" rx="10" ry="18"/>
+            <ellipse cx="0" cy="-70" rx="10" ry="18" transform="rotate(30)"/>
+            <ellipse cx="0" cy="-70" rx="10" ry="18" transform="rotate(60)"/>
+            <ellipse cx="0" cy="-70" rx="10" ry="18" transform="rotate(90)"/>
+            <ellipse cx="0" cy="-70" rx="10" ry="18" transform="rotate(120)"/>
+            <ellipse cx="0" cy="-70" rx="10" ry="18" transform="rotate(150)"/>
+            <ellipse cx="0" cy="-70" rx="10" ry="18" transform="rotate(180)"/>
+            <ellipse cx="0" cy="-70" rx="10" ry="18" transform="rotate(210)"/>
+            <ellipse cx="0" cy="-70" rx="10" ry="18" transform="rotate(240)"/>
+            <ellipse cx="0" cy="-70" rx="10" ry="18" transform="rotate(270)"/>
+            <ellipse cx="0" cy="-70" rx="10" ry="18" transform="rotate(300)"/>
+            <ellipse cx="0" cy="-70" rx="10" ry="18" transform="rotate(330)"/>
+          </g>
+          <!-- ring 3 -->
+          <circle r="90"/>
+          <g>
+            <ellipse cx="0" cy="-108" rx="9" ry="20"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(22.5)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(45)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(67.5)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(90)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(112.5)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(135)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(157.5)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(180)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(202.5)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(225)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(247.5)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(270)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(292.5)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(315)"/>
+            <ellipse cx="0" cy="-108" rx="9" ry="20" transform="rotate(337.5)"/>
+          </g>
+          <circle r="128"/>
+        </g>
+      </svg>
+      <p class="mandala-note">✦ لوّنيه على ورقة، أو فقط تأمليه بهدوء</p>
+    </div>
+
+    <div class="textarea-card">
+      <span class="textarea-label">أو جربي أحد هذه الأنشطة</span>
+      <div class="check-list">
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="cb">✓</div>
+          <div class="ct">استمعي لأغنية هادئة تحبينها</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="cb">✓</div>
+          <div class="ct">اصنعي كوباً من الشاي أو القهوة ببطء وتأنٍّ</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="cb">✓</div>
+          <div class="ct">تمشّي في مكان مفتوح لمدة ١٠ دقائق</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="cb">✓</div>
+          <div class="ct">رتّبي زاوية صغيرة من غرفتكِ</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="go('s5')">جاهزة للمرحلة الأخيرة ←</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN 5: PHASE 4 — CLOSING ===== -->
+<div class="screen" id="s5">
+  <div class="header">
+    <div>
+      <div class="logo-text">المرحلة الرابعة</div>
+      <div class="header-sub">الإغلاق والمراجعة</div>
+    </div>
+    <button class="back-btn" onclick="go('s4')">→ رجوع</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
+
+  <div class="content">
+    <div class="note-box">
+      هذا القسم هو <strong>مرسى الأمان</strong> وحكمة ما بعد العاصفة. اجلسي مع كوبكِ الدافئ وأجيبي بكل هدوء.
+    </div>
+
+    <div class="textarea-card">
+      <span class="textarea-label">كيف انتهى الموقف في النهاية؟ وهل كانت مخاوفكِ واقعية؟</span>
+      <textarea class="nafas-textarea" placeholder="اكتبي هنا بعد أن هدأت العاصفة..."></textarea>
+    </div>
+
+    <div class="textarea-card">
+      <span class="textarea-label">ماذا تعلمتِ من هذا الموقف؟ وما هي نصيحتكِ لنفسكِ؟</span>
+      <textarea class="nafas-textarea tall" placeholder="حوّلي التجربة الصعبة إلى حكمة دافئة تسندكِ في المستقبل..."></textarea>
+    </div>
+
+    <div class="ayah-card">
+      <div class="ayah-text">أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ</div>
+    </div>
+
+    <button class="btn-primary" onclick="go('s6')">أنهيت رحلتي اليوم 🌿</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN 6: END ===== -->
+<div class="screen" id="s6">
+  <div class="header">
+    <div>
+      <div class="logo-text">نَفَسْ</div>
+      <div class="header-sub">مساحتكِ الآمنة</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">خروج</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+
+  <div class="content" style="display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:40px;">
+    <div class="end-icon">🌿</div>
+    <div class="end-title">أحسنتِ</div>
+    <p class="end-sub">لقد أخذتِ لحظة لنفسكِ اليوم.<br>هذا ليس أمراً صغيراً.</p>
+
+    <div class="divider"></div>
+
+    <div class="ayah-card" style="width:100%;">
+      <div class="ayah-text" style="font-size:15px;">"الجسم يتذكر الهدوء<br>كما يتذكر التوتر.<br>درّبيه على الأول."</div>
+    </div>
+
+    <div style="width:100%;margin-top:8px;">
+      <button class="btn-primary" onclick="restart()">جلسة جديدة</button>
+      <button class="btn-ghost" onclick="go('s0')">العودة للرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<div class="expiry-banner" id="expiryBanner"></div>
+</div>
+
+<script>
+// ===== AUTH =====
+window.addEventListener('load', () => {
+  const session = localStorage.getItem('nafas_session');
+  if (!session) { window.location.href = 'login.html'; return; }
+  const data = JSON.parse(session);
+  if (new Date(data.expires_at) < new Date()) {
+    localStorage.removeItem('nafas_session');
+    window.location.href = 'login.html'; return;
+  }
+  const days = Math.ceil((new Date(data.expires_at) - new Date()) / 86400000);
+  if (days <= 7) {
+    const b = document.getElementById('expiryBanner');
+    b.textContent = `⏳ باقي ${days} أيام على انتهاء اشتراككِ`;
+    b.style.display = 'block';
+  }
+  // set today's date
+  const d = new Date(); const di = document.getElementById('dateInput');
+  if (di) di.valueAsDate = d;
+});
+
+function logout() {
+  localStorage.removeItem('nafas_session');
+  window.location.href = 'login.html';
+}
+
+// ===== NAVIGATION =====
+let navHistory = [];
+function go(id) {
+  navHistory.push(document.querySelector('.screen.active').id);
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function restart() {
+  navHistory = [];
+  breathCycle = 0; breathPhase = 0;
+  if (breathTimer) clearTimeout(breathTimer);
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('s0').classList.add('active');
+  document.querySelectorAll('.ground-item,.check-item').forEach(el => el.classList.remove('done','checked'));
+  document.querySelectorAll('.int-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.nafas-textarea').forEach(t => t.value = '');
+  document.querySelectorAll('.feeling-item').forEach(f => { f.classList.remove('checked'); f.querySelector('.check-box').textContent=''; });
+  const bdots = document.getElementById('breathDots'); if(bdots) bdots.innerHTML='';
+  document.getElementById('breathLabel').textContent='اضغطي للبدء';
+  document.getElementById('breathSub').textContent='';
+  document.getElementById('breathStep').textContent='استنشقي لـ ٤ ثوانٍ';
+  document.getElementById('breathCount').textContent='دورة ١ من ٤';
+  document.getElementById('breathCircle').className='breath-big';
+}
+
+function toggleCheck(el) { el.classList.toggle('done'); }
+function toggleGround(el) { el.classList.toggle('done'); }
+function selectInt(btn, val) {
+  document.querySelectorAll('.int-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+// ===== BREATHING =====
+let breathPhase=0, breathCycle=0, breathTimer=null;
+const TOTAL=4;
+const PHASES=[
+  {label:'استنشقي',sub:'٤ ثوانٍ',cls:'inhale',step:'استنشقي ببطء لـ ٤ ثوانٍ',dur:4000},
+  {label:'احبسي',sub:'٧ ثوانٍ',cls:'',step:'احبسي النفس في صدركِ ٧ ثوانٍ',dur:7000},
+  {label:'ازفري',sub:'٨ ثوانٍ',cls:'exhale',step:'ازفري ببطء شديد ٨ ثوانٍ',dur:8000}
+];
+function nextBreath() {
+  if (breathPhase===0) { buildBDots(); runBPhase(0); }
+}
+function buildBDots() {
+  const el=document.getElementById('breathDots'); el.innerHTML='';
+  for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='bdot';el.appendChild(d);}
+}
+function runBPhase(pi) {
+  const circle=document.getElementById('breathCircle');
+  const lbl=document.getElementById('breathLabel');
+  const sub=document.getElementById('breathSub');
+  const step=document.getElementById('breathStep');
+  const cnt=document.getElementById('breathCount');
+  if(pi>=3){
+    breathCycle++;
+    const dots=document.querySelectorAll('.bdot');
+    if(dots[breathCycle-1]) dots[breathCycle-1].classList.add('done');
+    if(breathCycle>=TOTAL){lbl.textContent='✓';sub.textContent='';step.textContent='أحسنتِ! انتهيتِ من ٤ دورات 🌿';cnt.textContent='';circle.className='breath-big';breathPhase=0;return;}
+    cnt.textContent=`دورة ${ar(breathCycle+1)} من ${ar(TOTAL)}`;
+    runBPhase(0);return;
+  }
+  const ph=PHASES[pi];
+  circle.className='breath-big '+ph.cls;
+  lbl.textContent=ph.label; sub.textContent=ph.sub; step.textContent=ph.step;
+  breathPhase=pi+1;
+  breathTimer=setTimeout(()=>runBPhase(pi+1),ph.dur);
+}
+function ar(n){return['١','٢','٣','٤','٥','٦','٧','٨'][n-1]||n;}
+</script>
+</body>
+  </html>
