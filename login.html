@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نَفَسْ — الدخول</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #F0EDE8;
+    --green: #7B9E87;
+    --green-pale: #D6E8DC;
+    --green-light: #A8C4B0;
+    --text: #3D3935;
+    --text-soft: #7A736B;
+    --muted: #C8BFB0;
+  }
+  body {
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .card {
+    background: white;
+    border-radius: 28px;
+    padding: 48px 36px;
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .breath-wrap {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 28px;
+  }
+  .breath-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--green-pale);
+    animation: breathe 5s ease-in-out infinite;
+  }
+  .breath-core {
+    position: absolute;
+    inset: 16px;
+    border-radius: 50%;
+    background: var(--green);
+    opacity: 0.85;
+  }
+  @keyframes breathe {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  .logo {
+    font-family: 'Noto Naskh Arabic', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .tagline {
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  .label {
+    font-size: 13px;
+    color: var(--text-soft);
+    align-self: flex-start;
+    margin-bottom: 8px;
+    width: 100%;
+  }
+  .input {
+    width: 100%;
+    border: 1.5px solid #E8E4DE;
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 20px;
+    text-align: left;
+    direction: ltr;
+  }
+  .input:focus { border-color: var(--green); }
+  .btn {
+    width: 100%;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 100px;
+    padding: 15px;
+    font-family: inherit;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    margin-top: 4px;
+  }
+  .btn:hover { background: #6a8e76; }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { background: var(--muted); cursor: not-allowed; }
+  .msg {
+    margin-top: 20px;
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.7;
+    min-height: 40px;
+  }
+  .msg.error { color: #c0392b; }
+  .msg.success { color: var(--green); }
+  .divider {
+    width: 40px; height: 1.5px;
+    background: #E8E4DE;
+    margin: 28px 0;
+    border-radius: 2px;
+  }
+  .buy-link {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.8;
+  }
+  .buy-link a {
+    color: var(--green);
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="breath-wrap">
+    <div class="breath-ring"></div>
+    <div class="breath-core"></div>
+  </div>
+
+  <div class="logo">نَفَسْ</div>
+  <p class="tagline">مفكرة الطوارئ النفسية</p>
+
+  <p class="label">البريد الإلكتروني</p>
+  <input class="input" type="email" id="emailInput" placeholder="example@email.com" />
+
+  <button class="btn" id="loginBtn" onclick="handleLogin()">دخول</button>
+
+  <div class="msg" id="msg"></div>
+
+  <div class="divider"></div>
+
+  <p class="buy-link">
+    ليس لديك حساب؟<br>
+    <a href="https://gumroad.com" target="_blank">اشترِ نَفَسْ من هنا</a>
+  </p>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://lpupgomwykhnyrcfnghy.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxwdXBnb213eWtobnlyY2ZuZ2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1ODE5MzEsImV4cCI6MjA5ODE1NzkzMX0.wZuFXRxbQB6-eJzqHHBJgo60kS_42JdnL37kXB82uxY';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// لو المستخدم دخل قبل كده، روّحه مباشرة
+window.addEventListener('load', () => {
+  const session = localStorage.getItem('nafas_session');
+  if (session) {
+    const data = JSON.parse(session);
+    if (new Date(data.expires_at) > new Date()) {
+      window.location.href = 'app.html';
+    } else {
+      localStorage.removeItem('nafas_session');
+    }
+  }
+});
+
+async function handleLogin() {
+  const email = document.getElementById('emailInput').value.trim().toLowerCase();
+  const btn = document.getElementById('loginBtn');
+  const msg = document.getElementById('msg');
+
+  if (!email || !email.includes('@')) {
+    showMsg('من فضلك أدخلي إيميل صحيح', 'error');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'جارٍ التحقق...';
+  msg.className = 'msg';
+  msg.textContent = '';
+
+  try {
+    const { data, error } = await db
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    if (error || !data) {
+      showMsg('هذا الإيميل غير مسجل.\nتأكدي من الإيميل أو اشتري نَفَسْ أولاً.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'دخول';
+      return;
+    }
+
+    // تحقق من انتهاء الصلاحية
+    if (new Date(data.expires_at) < new Date()) {
+      showMsg('انتهت صلاحية اشتراكك.\nللتجديد اضغطي على رابط الشراء.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'دخول';
+      return;
+    }
+
+    // تحقق من عدد الأجهزة
+    const deviceId = getDeviceId();
+    const usedDevices = [data.device_1, data.device_2].filter(Boolean);
+
+    if (!usedDevices.includes(deviceId) && usedDevices.length >= 2) {
+      showMsg('وصلت للحد الأقصى من الأجهزة (جهازان فقط).\nتواصلي معنا للمساعدة.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'دخول';
+      return;
+    }
+
+    // سجّل الجهاز لو جديد
+    if (!usedDevices.includes(deviceId)) {
+      const updateField = !data.device_1 ? { device_1: deviceId } : { device_2: deviceId };
+      await db.from('users').update(updateField).eq('email', email);
+    }
+
+    // احفظ الجلسة
+    localStorage.setItem('nafas_session', JSON.stringify({
+      email: data.email,
+      expires_at: data.expires_at,
+      device_id: deviceId
+    }));
+
+    showMsg('مرحباً بك 🌿 جارٍ الدخول...', 'success');
+    setTimeout(() => window.location.href = 'app.html', 1200);
+
+  } catch (err) {
+    showMsg('حدث خطأ، حاولي مرة أخرى', 'error');
+    btn.disabled = false;
+    btn.textContent = 'دخول';
+  }
+}
+
+function getDeviceId() {
+  let id = localStorage.getItem('nafas_device_id');
+  if (!id) {
+    id = 'dev_' + Math.random().toString(36).substr(2, 16) + Date.now();
+    localStorage.setItem('nafas_device_id', id);
+  }
+  return id;
+}
+
+function showMsg(text, type) {
+  const msg = document.getElementById('msg');
+  msg.textContent = text;
+  msg.className = 'msg ' + type;
+}
+
+// دخول بـ Enter
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') handleLogin();
+});
+</script>
+</body>
+    </html>
